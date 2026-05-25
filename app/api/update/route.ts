@@ -52,7 +52,8 @@ export async function GET(request: Request) {
 
     const newPoints: DataPoint[] = [];
 
-    for (const { date, value: fedAssets } of walcl) {
+    for (const { date, value: fedAssetsRaw } of walcl) {
+      const fedAssets = fedAssetsRaw / 1000; // WALCL is in millions on FRED, convert to billions
       if (existingDates.has(date)) continue;
 
       const tga   = tregenMap.get(date)         ?? nearestValue(tregenMap, date);
