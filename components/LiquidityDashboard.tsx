@@ -31,6 +31,63 @@ function fmtDateFull(dateStr: string) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+
+// Rolling Pearson correlation between Net Liquidity and S&P 500
+function rollingCorrelation(data: DataPoint[], window: number): { date: string; correlation: number }[] {
+  const results: { date: string; correlation: number }[] = [];
+  for (let i = window - 1; i < data.length; i++) {
+    const slice = data.slice(i - window + 1, i + 1);
+    const n = slice.length;
+    const xArr = slice.map(d => d.netLiquidity);
+    const yArr = slice.map(d => d.sp500);
+    const xMean = xArr.reduce((a, b) => a + b, 0) / n;
+    const yMean = yArr.reduce((a, b) => a + b, 0) / n;
+    const num = xArr.reduce((sum, x, j) => sum + (x - xMean) * (yArr[j] - yMean), 0);
+    const den = Math.sqrt(
+      xArr.reduce((s, x) => s + (x - xMean) ** 2, 0) *
+      yArr.reduce((s, y) => s + (y - yMean) ** 2, 0)
+    );
+    results.push({ date: slice[slice.length - 1].date, correlation: den === 0 ? 0 : num / den });
+  }
+  return results;
+}
+
+function corrColor(r: number): string {
+  if (r >= 0.5)  return '#22c55e';
+  if (r >= 0.2)  return '#86efac';
+  if (r >= -0.2) return '#f5a623';
+  if (r >= -0.5) return '#f87171';
+  return '#ef4444';
+}
+
+function corrLabel(r: number): string {
+  if (r >= 0.5)  return 'Strong positive — liquidity & equities moving together';
+  if (r >= 0.2)  return 'Moderate positive — broadly supportive';
+  if (r >= -0.2) return 'Weak / decorrelated — other forces dominating';
+  if (r >= -0.5) return 'Moderate inverse — divergence building';
+  return 'Strong inverse — significant divergence';
+}
+
+interface CorrTooltipProps {
+  active?: boolean;
+  payload?: { value: number }[];
+  label?: string;
+}
+
+function CorrTooltip({ active, payload, label }: CorrTooltipProps) {
+  if (!active || !payload?.length || !label) return null;
+  const r = payload[0].value;
+  return (
+    <div className="bg-[#0d1421] border border-[#1e2d42] rounded-lg p-3 shadow-2xl text-xs font-mono max-w-xs">
+      <p className="text-[#64748b] mb-1">{fmtDateFull(label)}</p>
+      <p className="font-bold mb-1" style={{ color: corrColor(r) }}>
+        r = {r.toFixed(2)}
+      </p>
+      <p className="text-[#94a3b8] leading-relaxed">{corrLabel(r)}</p>
+    </div>
+  );
+}
+
 interface CustomTooltipProps {
   active?: boolean;
   payload?: { color: string; name: string; value: number }[];
@@ -254,6 +311,11 @@ export default function LiquidityDashboard() {
   // Thin the data for performance — max 156 points is fine, no thinning needed
   const chartData = data;
 
+  // Rolling 26-week (6-month) correlation between Net Liquidity and S&P 500
+  const CORR_WINDOW = 26;
+  const corrData = rollingCorrelation(data, CORR_WINDOW);
+  const latestCorr = corrData[corrData.length - 1]?.correlation ?? null;
+
   return (
     <div className="min-h-screen bg-[#060a12] p-6 md:p-10">
       {/* Header */}
@@ -312,7 +374,7 @@ export default function LiquidityDashboard() {
       {!loading && !error && latest && (
         <>
           {/* Stat Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
             <StatCard
               label="Net Liquidity"
               value={`$${fmt(latest.netLiquidity)}B`}
@@ -335,6 +397,17 @@ export default function LiquidityDashboard() {
               value={`$${fmt(latest.rrp)}B`}
               color="#a855f7"
             />
+            {latestCorr !== null && (
+              <div className="bg-[#0d1421] border border-[#1e2d42] rounded-xl p-4">
+                <p className="text-[#64748b] text-xs font-mono uppercase tracking-widest mb-1">26W Correlation</p>
+                <p className="text-xl font-mono font-bold" style={{ color: corrColor(latestCorr) }}>
+                  r = {latestCorr.toFixed(2)}
+                </p>
+                <p className="text-xs font-mono mt-1 leading-tight" style={{ color: corrColor(latestCorr) }}>
+                  {corrLabel(latestCorr)}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Main Chart — Net Liquidity vs S&P 500 */}
@@ -498,6 +571,88 @@ export default function LiquidityDashboard() {
             </ResponsiveContainer>
           </div>
 
+
+          {/* Rolling Correlation Chart */}
+          <div className="bg-[#0d1421] border border-[#1e2d42] rounded-2xl p-5 mt-6">
+            <div className="flex items-start justify-between mb-1">
+              <h2 className="text-white font-mono text-sm font-semibold uppercase tracking-widest">
+                26-Week Rolling Correlation
+              </h2>
+              {latestCorr !== null && (
+                <span className="text-xs font-mono font-bold px-2 py-1 rounded" style={{ color: corrColor(latestCorr), border: `1px solid ${corrColor(latestCorr)}40`, background: `${corrColor(latestCorr)}10` }}>
+                  Current: r = {latestCorr.toFixed(2)}
+                </span>
+              )}
+            </div>
+            <p className="text-[#64748b] text-xs font-mono mb-4">
+              Pearson r between Net Liquidity and S&P 500 over trailing 26 weeks. Ranges from -1 (perfect inverse) to +1 (perfect alignment).
+            </p>
+            <ResponsiveContainer width="100%" height={200}>
+              <ComposedChart data={corrData} margin={{ top: 10, right: 20, left: 10, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="corrGradientPos" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%"  stopColor="#22c55e" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="corrGradientNeg" x1="0" y1="1" x2="0" y2="0">
+                    <stop offset="5%"  stopColor="#ef4444" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid stroke="#1e2d42" strokeDasharray="3 3" vertical={false} />
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={fmtDate}
+                  tick={{ fill: '#64748b', fontSize: 11, fontFamily: 'monospace' }}
+                  axisLine={{ stroke: '#1e2d42' }}
+                  tickLine={false}
+                  interval="preserveStartEnd"
+                />
+                <YAxis
+                  domain={[-1, 1]}
+                  ticks={[-1, -0.5, 0, 0.5, 1]}
+                  tickFormatter={v => v.toFixed(1)}
+                  tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'monospace' }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={40}
+                />
+                <Tooltip content={<CorrTooltip />} />
+                <ReferenceLine y={0}    stroke="#334155" strokeWidth={1.5} />
+                <ReferenceLine y={0.5}  stroke="#22c55e" strokeDasharray="4 4" strokeOpacity={0.3} />
+                <ReferenceLine y={-0.5} stroke="#ef4444" strokeDasharray="4 4" strokeOpacity={0.3} />
+                <Area
+                  type="monotone"
+                  dataKey="correlation"
+                  stroke="none"
+                  fill="url(#corrGradientPos)"
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="correlation"
+                  stroke="#00d4ff"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 4, fill: '#00d4ff' }}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+            <div className="flex flex-wrap gap-4 mt-3">
+              {[
+                { label: 'Strong positive (>0.5)', color: '#22c55e' },
+                { label: 'Moderate (0.2-0.5)', color: '#86efac' },
+                { label: 'Decorrelated', color: '#f5a623' },
+                { label: 'Moderate inverse', color: '#f87171' },
+                { label: 'Strong inverse (<-0.5)', color: '#ef4444' },
+              ].map(item => (
+                <div key={item.label} className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+                  <span className="text-[#64748b] text-xs font-mono">{item.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
           {/* How to Read This */}
           <HowToReadThis />
