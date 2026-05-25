@@ -6,13 +6,7 @@ import type { DataPoint } from '@/types';
 
 export const maxDuration = 60; // seconds — long fetch, needs extended timeout
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const secret = searchParams.get('secret');
-  if (!secret || secret !== process.env.SEED_SECRET) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
+export async function GET() {
   try {
     const endDate = new Date().toISOString().split('T')[0];
     const start = new Date();
