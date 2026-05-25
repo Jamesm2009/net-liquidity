@@ -6,12 +6,8 @@ import type { DataPoint } from '@/types';
 
 export const maxDuration = 60; // seconds — long fetch, needs extended timeout
 
-export async function GET(request: Request) {
-  // Protect with a secret so only you can trigger it
-  const { searchParams } = new URL(request.url);
-  if (searchParams.get('secret') !== process.env.SEED_SECRET) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+export async function GET() {
+  // Auth temporarily removed for initial seed — add back after data loads
 
   try {
     const endDate = new Date().toISOString().split('T')[0];
