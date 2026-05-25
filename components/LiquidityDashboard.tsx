@@ -309,8 +309,20 @@ export default function LiquidityDashboard() {
                   interval="preserveStartEnd"
                 />
                 <YAxis
+                  yAxisId="assets"
+                  orientation="left"
                   tickFormatter={v => `$${fmt(v)}B`}
-                  tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'monospace' }}
+                  tick={{ fill: '#22c55e', fontSize: 10, fontFamily: 'monospace' }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={80}
+                  domain={['auto', 'auto']}
+                />
+                <YAxis
+                  yAxisId="drains"
+                  orientation="right"
+                  tickFormatter={v => `$${fmt(v)}B`}
+                  tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'monospace' }}
                   axisLine={false}
                   tickLine={false}
                   width={80}
@@ -329,6 +341,7 @@ export default function LiquidityDashboard() {
                   }}
                 />
                 <Line
+                  yAxisId="assets"
                   type="monotone"
                   dataKey="fedAssets"
                   name="Fed Assets"
@@ -338,6 +351,7 @@ export default function LiquidityDashboard() {
                   activeDot={{ r: 4 }}
                 />
                 <Line
+                  yAxisId="drains"
                   type="monotone"
                   dataKey="tga"
                   name="TGA"
@@ -347,6 +361,7 @@ export default function LiquidityDashboard() {
                   activeDot={{ r: 4 }}
                 />
                 <Line
+                  yAxisId="drains"
                   type="monotone"
                   dataKey="rrp"
                   name="Reverse Repo"
