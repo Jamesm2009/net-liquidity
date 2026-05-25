@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server';
 import { redis, DATA_KEY, UPDATED_KEY } from '@/lib/redis';
 import type { DataPoint } from '@/types';
 
-export const revalidate = 3600; // cache for 1 hour
-
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const years = Math.min(parseInt(searchParams.get('years') ?? '3'), 3);
@@ -14,7 +12,12 @@ export async function GET(request: Request) {
   ]);
 
   if (!raw) {
-    return NextResponse.json({ error: 'No data found. Run /api/seed first.' }, { status: 404 });
+    return NextResponse.json({
+      data: [],
+      lastUpdated: null,
+      count: 0,
+      message: 'No data yet — visit /api/seed to load.',
+    });
   }
 
   const data: DataPoint[] = typeof raw === 'string' ? JSON.parse(raw) : (raw as DataPoint[]);
