@@ -92,6 +92,130 @@ function StatCard({ label, value, change, color }: StatCardProps) {
   );
 }
 
+
+interface GuideItem {
+  signal: string;
+  meaning: string;
+  color: string;
+}
+
+const GUIDE_ITEMS: GuideItem[] = [
+  {
+    signal: 'Net Liquidity rising',
+    meaning: 'More cash in the financial system. Historically supportive for equities — the S&P 500 tends to follow Net Liquidity higher with a short lag.',
+    color: '#22c55e',
+  },
+  {
+    signal: 'Net Liquidity falling',
+    meaning: 'Cash being absorbed from the system. Has historically preceded equity weakness or consolidation, particularly when the decline is sustained.',
+    color: '#ef4444',
+  },
+  {
+    signal: 'Fed Assets declining',
+    meaning: 'The Fed is doing Quantitative Tightening (QT) — shrinking its balance sheet by not reinvesting maturing bonds. This directly removes reserves from the banking system.',
+    color: '#22c55e',
+  },
+  {
+    signal: 'TGA rising',
+    meaning: "The Treasury's cash balance at the Fed is growing — money is flowing out of the banking system into the government's account. Acts like a stealth tightening.",
+    color: '#ef4444',
+  },
+  {
+    signal: 'TGA falling',
+    meaning: 'Government spending is injecting cash back into the system. A TGA drawdown is typically a short-term liquidity tailwind for markets.',
+    color: '#22c55e',
+  },
+  {
+    signal: 'RRP draining toward zero',
+    meaning: "Money market funds pull cash from the Fed overnight facility back into markets. The 2023-24 RRP drain ($2.5T to near $0) was a major hidden tailwind for equities.",
+    color: '#a855f7',
+  },
+];
+
+const FORMULA_ITEMS = [
+  { label: 'Fed Assets', sign: '+', desc: 'Total Fed balance sheet — adds reserves to the system', color: '#22c55e' },
+  { label: 'TGA', sign: '−', desc: 'Treasury cash at the Fed — parked money, not in markets', color: '#ef4444' },
+  { label: 'Reverse Repo', sign: '−', desc: 'Cash parked at Fed overnight by money markets', color: '#a855f7' },
+];
+
+function HowToReadThis() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="mt-6 border border-[#1e2d42] rounded-2xl overflow-hidden">
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#0d1421] transition-colors"
+      >
+        <span className="text-white font-mono text-sm font-semibold uppercase tracking-widest">
+          How to Read This Dashboard
+        </span>
+        <span className="text-[#64748b] font-mono text-lg leading-none">
+          {open ? '−' : '+'}
+        </span>
+      </button>
+
+      {open && (
+        <div className="px-5 pb-6 bg-[#0d1421] space-y-6">
+
+          {/* The formula */}
+          <div>
+            <p className="text-[#64748b] text-xs font-mono uppercase tracking-widest mb-3">The Formula</p>
+            <div className="bg-[#060a12] rounded-xl p-4 font-mono text-sm">
+              <p className="text-white mb-3">
+                <span className="text-[#00d4ff] font-bold">Net Liquidity</span>
+                <span className="text-[#64748b]"> = </span>
+                {FORMULA_ITEMS.map((item, i) => (
+                  <span key={item.label}>
+                    {i > 0 && <span className="text-[#64748b] mx-2">{item.sign}</span>}
+                    <span style={{ color: item.color }}>{item.label}</span>
+                  </span>
+                ))}
+              </p>
+              <div className="space-y-1 border-t border-[#1e2d42] pt-3">
+                {FORMULA_ITEMS.map(item => (
+                  <p key={item.label} className="text-xs text-[#64748b]">
+                    <span style={{ color: item.color }} className="font-semibold">{item.sign} {item.label}:</span>
+                    {' '}{item.desc}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Signal guide */}
+          <div>
+            <p className="text-[#64748b] text-xs font-mono uppercase tracking-widest mb-3">Signal Guide</p>
+            <div className="space-y-3">
+              {GUIDE_ITEMS.map(item => (
+                <div key={item.signal} className="flex gap-3">
+                  <div
+                    className="mt-0.5 w-2 h-2 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: item.color, marginTop: '5px' }}
+                  />
+                  <div>
+                    <p className="text-white text-xs font-mono font-semibold">{item.signal}</p>
+                    <p className="text-[#64748b] text-xs font-mono mt-0.5 leading-relaxed">{item.meaning}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Caveats */}
+          <div className="bg-amber-900/10 border border-amber-800/30 rounded-xl p-4">
+            <p className="text-amber-400 text-xs font-mono font-semibold mb-1">Important caveats</p>
+            <p className="text-[#94a3b8] text-xs font-mono leading-relaxed">
+              Net Liquidity is a macro backdrop indicator, not a precise market timer. The correlation with equities is real (~0.6 historically) but imperfect — sentiment, earnings, and geopolitics all independently move markets. Use it as one lens among many, not as a standalone buy/sell signal.
+            </p>
+          </div>
+
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function LiquidityDashboard() {
   const [data, setData] = useState<DataPoint[]>([]);
   const [years, setYears] = useState<1 | 2 | 3>(3);
@@ -373,6 +497,10 @@ export default function LiquidityDashboard() {
               </ComposedChart>
             </ResponsiveContainer>
           </div>
+
+
+          {/* How to Read This */}
+          <HowToReadThis />
 
           {/* Footer */}
           <p className="text-center text-[#2d3f55] text-xs font-mono mt-6">
