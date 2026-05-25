@@ -36,7 +36,8 @@ export async function GET() {
     // For each date, look up the other series (using nearest-day fallback)
     const dataPoints: DataPoint[] = [];
 
-    for (const { date, value: fedAssets } of walcl) {
+    for (const { date, value: fedAssetsRaw } of walcl) {
+      const fedAssets = fedAssetsRaw / 1000; // WALCL is in millions on FRED, convert to billions
       const tga   = tregenMap.get(date)         ?? nearestValue(tregenMap, date);
       const rrp   = nearestValue(rrpMap, date);
       const sp500 = nearestValue(sp500Map, date);
