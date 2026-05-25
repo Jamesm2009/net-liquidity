@@ -28,7 +28,7 @@ export async function GET() {
     const sp500Daily = await fetchSP500(startDate, endDate);
 
     // Build lookup maps for fast access
-    const tregenMap = new Map(wtregen.map(d => [d.date, d.value]));
+    const tregenMap = new Map(wtregen.map(d => [d.date, d.value / 1000])); // WTREGEN is in millions on FRED, convert to billions
     const rrpMap    = new Map(rrpDaily.map(d => [d.date, d.value]));
     const sp500Map  = new Map(sp500Daily.map(d => [d.date, d.value]));
 
