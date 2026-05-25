@@ -276,6 +276,7 @@ function HowToReadThis() {
 export default function LiquidityDashboard() {
   const [data, setData] = useState<DataPoint[]>([]);
   const [years, setYears] = useState<1 | 2 | 3>(3);
+  const [showGuide, setShowGuide] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -337,7 +338,7 @@ export default function LiquidityDashboard() {
                 })}
               </p>
             )}
-            <div className="flex gap-2 mt-2">
+            <div className="flex gap-2 mt-2 items-center">
               {YEARS_OPTIONS.map(y => (
                 <button
                   key={y}
@@ -351,10 +352,89 @@ export default function LiquidityDashboard() {
                   {y}Y
                 </button>
               ))}
+              <div className="w-px h-4 bg-[#1e2d42] mx-1" />
+              <button
+                onClick={() => setShowGuide(true)}
+                className="px-3 py-1 rounded text-xs font-mono border border-[#1e2d42] text-[#64748b] hover:border-[#00d4ff] hover:text-white transition-all"
+              >
+                ? How to Read
+              </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* How to Read Modal */}
+      {showGuide && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center p-4 md:p-10 overflow-y-auto">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowGuide(false)} />
+          <div className="relative bg-[#0d1421] border border-[#1e2d42] rounded-2xl w-full max-w-2xl my-auto shadow-2xl">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#1e2d42]">
+              <h2 className="text-white font-mono text-sm font-semibold uppercase tracking-widest">
+                How to Read This Dashboard
+              </h2>
+              <button
+                onClick={() => setShowGuide(false)}
+                className="text-[#64748b] hover:text-white font-mono text-xl leading-none transition-colors"
+              >
+                x
+              </button>
+            </div>
+            <div className="px-6 py-5 space-y-6 max-h-[80vh] overflow-y-auto">
+
+              {/* Formula */}
+              <div>
+                <p className="text-[#64748b] text-xs font-mono uppercase tracking-widest mb-3">The Formula</p>
+                <div className="bg-[#060a12] rounded-xl p-4 font-mono text-sm">
+                  <p className="text-white mb-3">
+                    <span className="text-[#00d4ff] font-bold">Net Liquidity</span>
+                    <span className="text-[#64748b]"> = </span>
+                    {FORMULA_ITEMS.map((item, i) => (
+                      <span key={item.label}>
+                        {i > 0 && <span className="text-[#64748b] mx-2">{item.sign}</span>}
+                        <span style={{ color: item.color }}>{item.label}</span>
+                      </span>
+                    ))}
+                  </p>
+                  <div className="space-y-1 border-t border-[#1e2d42] pt-3">
+                    {FORMULA_ITEMS.map(item => (
+                      <p key={item.label} className="text-xs text-[#64748b]">
+                        <span style={{ color: item.color }} className="font-semibold">{item.sign} {item.label}:</span>
+                        {" "}{item.desc}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Signal Guide */}
+              <div>
+                <p className="text-[#64748b] text-xs font-mono uppercase tracking-widest mb-3">Signal Guide</p>
+                <div className="space-y-3">
+                  {GUIDE_ITEMS.map(item => (
+                    <div key={item.signal} className="flex gap-3">
+                      <div className="w-2 h-2 rounded-full flex-shrink-0 mt-1" style={{ backgroundColor: item.color }} />
+                      <div>
+                        <p className="text-white text-xs font-mono font-semibold">{item.signal}</p>
+                        <p className="text-[#64748b] text-xs font-mono mt-0.5 leading-relaxed">{item.meaning}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Caveats */}
+              <div className="bg-amber-900/10 border border-amber-800/30 rounded-xl p-4">
+                <p className="text-amber-400 text-xs font-mono font-semibold mb-1">Important caveats</p>
+                <p className="text-[#94a3b8] text-xs font-mono leading-relaxed">
+                  Net Liquidity is a macro backdrop indicator, not a precise market timer. The correlation with equities is real but imperfect — sentiment, earnings, and geopolitics all independently move markets. Use it as one lens among many, not as a standalone buy/sell signal.
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
 
       {loading && (
         <div className="flex items-center justify-center h-96 text-[#64748b] font-mono text-sm">
@@ -653,9 +733,6 @@ export default function LiquidityDashboard() {
               ))}
             </div>
           </div>
-
-          {/* How to Read This */}
-          <HowToReadThis />
 
           {/* Footer */}
           <p className="text-center text-[#2d3f55] text-xs font-mono mt-6">
