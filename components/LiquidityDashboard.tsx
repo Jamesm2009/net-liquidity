@@ -79,11 +79,11 @@ function CorrTooltip({ active, payload, label }: CorrTooltipProps) {
   const r = payload[0].value;
   return (
     <div className="bg-[#0d1421] border border-[#1e2d42] rounded-lg p-3 shadow-2xl text-xs font-mono max-w-xs">
-      <p className="text-[#64748b] mb-1">{fmtDateFull(label)}</p>
+      <p className="text-[#cbd5e1] mb-1">{fmtDateFull(label)}</p>
       <p className="font-bold mb-1" style={{ color: corrColor(r) }}>
         r = {r.toFixed(2)}
       </p>
-      <p className="text-[#94a3b8] leading-relaxed">{corrLabel(r)}</p>
+      <p className="text-[#cbd5e1] leading-relaxed">{corrLabel(r)}</p>
     </div>
   );
 }
@@ -98,7 +98,7 @@ function MainTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload?.length || !label) return null;
   return (
     <div className="bg-[#0d1421] border border-[#1e2d42] rounded-lg p-3 shadow-2xl text-xs font-mono">
-      <p className="text-[#64748b] mb-2">{fmtDateFull(label)}</p>
+      <p className="text-[#cbd5e1] mb-2">{fmtDateFull(label)}</p>
       {payload.map(p => (
         <div key={p.name} className="flex justify-between gap-6 mb-1">
           <span style={{ color: p.color }}>{p.name}</span>
@@ -115,7 +115,7 @@ function ComponentTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload?.length || !label) return null;
   return (
     <div className="bg-[#0d1421] border border-[#1e2d42] rounded-lg p-3 shadow-2xl text-xs font-mono">
-      <p className="text-[#64748b] mb-2">{fmtDateFull(label)}</p>
+      <p className="text-[#cbd5e1] mb-2">{fmtDateFull(label)}</p>
       {payload.map(p => (
         <div key={p.name} className="flex justify-between gap-6 mb-1">
           <span style={{ color: p.color }}>{p.name}</span>
@@ -136,7 +136,7 @@ interface StatCardProps {
 function StatCard({ label, value, change, color }: StatCardProps) {
   return (
     <div className="bg-[#0d1421] border border-[#1e2d42] rounded-xl p-4">
-      <p className="text-[#64748b] text-xs font-mono uppercase tracking-widest mb-1">{label}</p>
+      <p className="text-[#cbd5e1] text-xs font-mono uppercase tracking-widest mb-1">{label}</p>
       <p className="text-white text-xl font-mono font-bold" style={{ color }}>
         {value}
       </p>
@@ -207,7 +207,7 @@ function HowToReadThis() {
         <span className="text-white font-mono text-sm font-semibold uppercase tracking-widest">
           How to Read This Dashboard
         </span>
-        <span className="text-[#64748b] font-mono text-lg leading-none">
+        <span className="text-[#cbd5e1] font-mono text-lg leading-none">
           {open ? '−' : '+'}
         </span>
       </button>
@@ -217,21 +217,21 @@ function HowToReadThis() {
 
           {/* The formula */}
           <div>
-            <p className="text-[#64748b] text-xs font-mono uppercase tracking-widest mb-3">The Formula</p>
+            <p className="text-[#cbd5e1] text-xs font-mono uppercase tracking-widest mb-3">The Formula</p>
             <div className="bg-[#060a12] rounded-xl p-4 font-mono text-sm">
               <p className="text-white mb-3">
                 <span className="text-[#00d4ff] font-bold">Net Liquidity</span>
-                <span className="text-[#64748b]"> = </span>
+                <span className="text-[#cbd5e1]"> = </span>
                 {FORMULA_ITEMS.map((item, i) => (
                   <span key={item.label}>
-                    {i > 0 && <span className="text-[#64748b] mx-2">{item.sign}</span>}
+                    {i > 0 && <span className="text-[#cbd5e1] mx-2">{item.sign}</span>}
                     <span style={{ color: item.color }}>{item.label}</span>
                   </span>
                 ))}
               </p>
               <div className="space-y-1 border-t border-[#1e2d42] pt-3">
                 {FORMULA_ITEMS.map(item => (
-                  <p key={item.label} className="text-xs text-[#64748b]">
+                  <p key={item.label} className="text-xs text-[#cbd5e1]">
                     <span style={{ color: item.color }} className="font-semibold">{item.sign} {item.label}:</span>
                     {' '}{item.desc}
                   </p>
@@ -242,7 +242,7 @@ function HowToReadThis() {
 
           {/* Signal guide */}
           <div>
-            <p className="text-[#64748b] text-xs font-mono uppercase tracking-widest mb-3">Signal Guide</p>
+            <p className="text-[#cbd5e1] text-xs font-mono uppercase tracking-widest mb-3">Signal Guide</p>
             <div className="space-y-3">
               {GUIDE_ITEMS.map(item => (
                 <div key={item.signal} className="flex gap-3">
@@ -252,7 +252,7 @@ function HowToReadThis() {
                   />
                   <div>
                     <p className="text-white text-xs font-mono font-semibold">{item.signal}</p>
-                    <p className="text-[#64748b] text-xs font-mono mt-0.5 leading-relaxed">{item.meaning}</p>
+                    <p className="text-[#cbd5e1] text-xs font-mono mt-0.5 leading-relaxed">{item.meaning}</p>
                   </div>
                 </div>
               ))}
@@ -262,7 +262,7 @@ function HowToReadThis() {
           {/* Caveats */}
           <div className="bg-amber-900/10 border border-amber-800/30 rounded-xl p-4">
             <p className="text-amber-400 text-xs font-mono font-semibold mb-1">Important caveats</p>
-            <p className="text-[#94a3b8] text-xs font-mono leading-relaxed">
+            <p className="text-[#cbd5e1] text-xs font-mono leading-relaxed">
               Net Liquidity is a macro backdrop indicator, not a precise market timer. The correlation with equities is real (~0.6 historically) but imperfect — sentiment, earnings, and geopolitics all independently move markets. Use it as one lens among many, not as a standalone buy/sell signal.
             </p>
           </div>
@@ -326,13 +326,13 @@ export default function LiquidityDashboard() {
             <h1 className="text-2xl md:text-3xl font-mono font-bold text-white tracking-tight">
               Fed Net Liquidity Monitor
             </h1>
-            <p className="text-[#64748b] text-sm font-mono mt-1">
+            <p className="text-[#cbd5e1] text-sm font-mono mt-1">
               Net Liquidity = Fed Assets − Treasury General Account − Reverse Repo
             </p>
           </div>
           <div className="text-right">
             {lastUpdated && (
-              <p className="text-[#64748b] text-xs font-mono">
+              <p className="text-[#cbd5e1] text-xs font-mono">
                 Updated {new Date(lastUpdated).toLocaleDateString('en-US', {
                   month: 'short', day: 'numeric', year: 'numeric'
                 })}
@@ -346,7 +346,7 @@ export default function LiquidityDashboard() {
                   className={`px-3 py-1 rounded text-xs font-mono transition-all ${
                     years === y
                       ? 'bg-[#00d4ff] text-[#060a12] font-bold'
-                      : 'border border-[#1e2d42] text-[#64748b] hover:border-[#00d4ff] hover:text-white'
+                      : 'border border-[#1e2d42] text-[#cbd5e1] hover:border-[#00d4ff] hover:text-white'
                   }`}
                 >
                   {y}Y
@@ -355,7 +355,7 @@ export default function LiquidityDashboard() {
               <div className="w-px h-4 bg-[#1e2d42] mx-1" />
               <button
                 onClick={() => setShowGuide(true)}
-                className="px-3 py-1 rounded text-xs font-mono border border-[#1e2d42] text-[#64748b] hover:border-[#00d4ff] hover:text-white transition-all"
+                className="px-3 py-1 rounded text-xs font-mono border border-[#1e2d42] text-[#cbd5e1] hover:border-[#00d4ff] hover:text-white transition-all"
               >
                 ? How to Read
               </button>
@@ -375,7 +375,7 @@ export default function LiquidityDashboard() {
               </h2>
               <button
                 onClick={() => setShowGuide(false)}
-                className="text-[#64748b] hover:text-white font-mono text-xl leading-none transition-colors"
+                className="text-[#cbd5e1] hover:text-white font-mono text-xl leading-none transition-colors"
               >
                 x
               </button>
@@ -384,21 +384,21 @@ export default function LiquidityDashboard() {
 
               {/* Formula */}
               <div>
-                <p className="text-[#64748b] text-xs font-mono uppercase tracking-widest mb-3">The Formula</p>
+                <p className="text-[#cbd5e1] text-xs font-mono uppercase tracking-widest mb-3">The Formula</p>
                 <div className="bg-[#060a12] rounded-xl p-4 font-mono text-sm">
                   <p className="text-white mb-3">
                     <span className="text-[#00d4ff] font-bold">Net Liquidity</span>
-                    <span className="text-[#64748b]"> = </span>
+                    <span className="text-[#cbd5e1]"> = </span>
                     {FORMULA_ITEMS.map((item, i) => (
                       <span key={item.label}>
-                        {i > 0 && <span className="text-[#64748b] mx-2">{item.sign}</span>}
+                        {i > 0 && <span className="text-[#cbd5e1] mx-2">{item.sign}</span>}
                         <span style={{ color: item.color }}>{item.label}</span>
                       </span>
                     ))}
                   </p>
                   <div className="space-y-1 border-t border-[#1e2d42] pt-3">
                     {FORMULA_ITEMS.map(item => (
-                      <p key={item.label} className="text-xs text-[#64748b]">
+                      <p key={item.label} className="text-xs text-[#cbd5e1]">
                         <span style={{ color: item.color }} className="font-semibold">{item.sign} {item.label}:</span>
                         {" "}{item.desc}
                       </p>
@@ -409,14 +409,14 @@ export default function LiquidityDashboard() {
 
               {/* Signal Guide */}
               <div>
-                <p className="text-[#64748b] text-xs font-mono uppercase tracking-widest mb-3">Signal Guide</p>
+                <p className="text-[#cbd5e1] text-xs font-mono uppercase tracking-widest mb-3">Signal Guide</p>
                 <div className="space-y-3">
                   {GUIDE_ITEMS.map(item => (
                     <div key={item.signal} className="flex gap-3">
                       <div className="w-2 h-2 rounded-full flex-shrink-0 mt-1" style={{ backgroundColor: item.color }} />
                       <div>
                         <p className="text-white text-xs font-mono font-semibold">{item.signal}</p>
-                        <p className="text-[#64748b] text-xs font-mono mt-0.5 leading-relaxed">{item.meaning}</p>
+                        <p className="text-[#cbd5e1] text-xs font-mono mt-0.5 leading-relaxed">{item.meaning}</p>
                       </div>
                     </div>
                   ))}
@@ -426,7 +426,7 @@ export default function LiquidityDashboard() {
               {/* Caveats */}
               <div className="bg-amber-900/10 border border-amber-800/30 rounded-xl p-4">
                 <p className="text-amber-400 text-xs font-mono font-semibold mb-1">Important caveats</p>
-                <p className="text-[#94a3b8] text-xs font-mono leading-relaxed">
+                <p className="text-[#cbd5e1] text-xs font-mono leading-relaxed">
                   Net Liquidity is a macro backdrop indicator, not a precise market timer. The correlation with equities is real but imperfect — sentiment, earnings, and geopolitics all independently move markets. Use it as one lens among many, not as a standalone buy/sell signal.
                 </p>
               </div>
@@ -437,7 +437,7 @@ export default function LiquidityDashboard() {
       )}
 
       {loading && (
-        <div className="flex items-center justify-center h-96 text-[#64748b] font-mono text-sm">
+        <div className="flex items-center justify-center h-96 text-[#cbd5e1] font-mono text-sm">
           <span className="animate-pulse">Loading market data...</span>
         </div>
       )}
@@ -445,7 +445,7 @@ export default function LiquidityDashboard() {
       {error && (
         <div className="bg-rose-900/20 border border-rose-800 rounded-xl p-6 text-center font-mono">
           <p className="text-rose-400 text-sm">{error}</p>
-          <p className="text-[#64748b] text-xs mt-2">
+          <p className="text-[#cbd5e1] text-xs mt-2">
             Make sure you have run <code className="text-amber-400">/api/seed</code> to load initial data.
           </p>
         </div>
@@ -479,7 +479,7 @@ export default function LiquidityDashboard() {
             />
             {latestCorr !== null && (
               <div className="bg-[#0d1421] border border-[#1e2d42] rounded-xl p-4">
-                <p className="text-[#64748b] text-xs font-mono uppercase tracking-widest mb-1">26W Correlation</p>
+                <p className="text-[#cbd5e1] text-xs font-mono uppercase tracking-widest mb-1">26W Correlation</p>
                 <p className="text-xl font-mono font-bold" style={{ color: corrColor(latestCorr) }}>
                   r = {latestCorr.toFixed(2)}
                 </p>
@@ -507,7 +507,7 @@ export default function LiquidityDashboard() {
                 <XAxis
                   dataKey="date"
                   tickFormatter={fmtDate}
-                  tick={{ fill: '#64748b', fontSize: 11, fontFamily: 'monospace' }}
+                  tick={{ fill: '#cbd5e1', fontSize: 11, fontFamily: 'monospace' }}
                   axisLine={{ stroke: '#1e2d42' }}
                   tickLine={false}
                   interval="preserveStartEnd"
@@ -571,7 +571,7 @@ export default function LiquidityDashboard() {
             <h2 className="text-white font-mono text-sm font-semibold mb-1 uppercase tracking-widest">
               Liquidity Components
             </h2>
-            <p className="text-[#64748b] text-xs font-mono mb-4">
+            <p className="text-[#cbd5e1] text-xs font-mono mb-4">
               Fed Assets (adds liquidity) · TGA & RRP (drain liquidity)
             </p>
             <ResponsiveContainer width="100%" height={280}>
@@ -580,7 +580,7 @@ export default function LiquidityDashboard() {
                 <XAxis
                   dataKey="date"
                   tickFormatter={fmtDate}
-                  tick={{ fill: '#64748b', fontSize: 11, fontFamily: 'monospace' }}
+                  tick={{ fill: '#cbd5e1', fontSize: 11, fontFamily: 'monospace' }}
                   axisLine={{ stroke: '#1e2d42' }}
                   tickLine={false}
                   interval="preserveStartEnd"
@@ -599,7 +599,7 @@ export default function LiquidityDashboard() {
                   yAxisId="drains"
                   orientation="right"
                   tickFormatter={v => `$${fmt(v)}B`}
-                  tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'monospace' }}
+                  tick={{ fill: '#cbd5e1', fontSize: 10, fontFamily: 'monospace' }}
                   axisLine={false}
                   tickLine={false}
                   width={80}
@@ -664,7 +664,7 @@ export default function LiquidityDashboard() {
                 </span>
               )}
             </div>
-            <p className="text-[#64748b] text-xs font-mono mb-4">
+            <p className="text-[#cbd5e1] text-xs font-mono mb-4">
               Pearson r between Net Liquidity and S&P 500 over trailing 26 weeks. Ranges from -1 (perfect inverse) to +1 (perfect alignment).
             </p>
             <ResponsiveContainer width="100%" height={200}>
@@ -683,7 +683,7 @@ export default function LiquidityDashboard() {
                 <XAxis
                   dataKey="date"
                   tickFormatter={fmtDate}
-                  tick={{ fill: '#64748b', fontSize: 11, fontFamily: 'monospace' }}
+                  tick={{ fill: '#cbd5e1', fontSize: 11, fontFamily: 'monospace' }}
                   axisLine={{ stroke: '#1e2d42' }}
                   tickLine={false}
                   interval="preserveStartEnd"
@@ -692,7 +692,7 @@ export default function LiquidityDashboard() {
                   domain={[-1, 1]}
                   ticks={[-1, -0.5, 0, 0.5, 1]}
                   tickFormatter={v => v.toFixed(1)}
-                  tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'monospace' }}
+                  tick={{ fill: '#cbd5e1', fontSize: 10, fontFamily: 'monospace' }}
                   axisLine={false}
                   tickLine={false}
                   width={40}
@@ -728,14 +728,14 @@ export default function LiquidityDashboard() {
               ].map(item => (
                 <div key={item.label} className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
-                  <span className="text-[#64748b] text-xs font-mono">{item.label}</span>
+                  <span className="text-[#cbd5e1] text-xs font-mono">{item.label}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Footer */}
-          <p className="text-center text-[#2d3f55] text-xs font-mono mt-6">
+          <p className="text-center text-[#64748b] text-xs font-mono mt-6">
             Sources: Federal Reserve (FRED) · Yahoo Finance · Updated weekly (Wed) with WALCL release
           </p>
         </>
