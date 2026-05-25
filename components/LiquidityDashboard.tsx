@@ -243,6 +243,7 @@ export default function LiquidityDashboard() {
                   axisLine={false}
                   tickLine={false}
                   width={80}
+                  domain={['auto', 'auto']}
                 />
                 <YAxis
                   yAxisId="spx"
@@ -252,6 +253,7 @@ export default function LiquidityDashboard() {
                   axisLine={false}
                   tickLine={false}
                   width={65}
+                  domain={['auto', 'auto']}
                 />
                 <Tooltip content={<MainTooltip />} />
                 <Legend
@@ -312,6 +314,7 @@ export default function LiquidityDashboard() {
                   axisLine={false}
                   tickLine={false}
                   width={80}
+                  domain={['auto', 'auto']}
                 />
                 <Tooltip content={<ComponentTooltip />} />
                 <Legend
