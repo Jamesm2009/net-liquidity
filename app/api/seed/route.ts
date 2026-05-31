@@ -5,7 +5,9 @@ import { fetchSP500 } from '@/lib/market';
 import { redis, DATA_KEY, UPDATED_KEY } from '@/lib/redis';
 import type { DataPoint } from '@/types';
 
-export const maxDuration = 60; // seconds — long fetch, needs extended timeout
+export const maxDuration = 60;
+
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export async function GET() {
   try {
@@ -16,28 +18,23 @@ export async function GET() {
 
     console.log(`Seeding from ${startDate} to ${endDate}...`);
 
-    // Fetch all FRED series in parallel v2
-    const [walcl, wtregen, rrpDaily] = await Promise.all([
-      fetchFredSeries('WALCL', startDate, endDate),       // Fed total assets (weekly)
-      fetchFredSeries('WTREGEN', startDate, endDate),     // Treasury Gen. Account (weekly)
-      fetchFredSeries('RRPONTSYD', startDate, endDate),   // Overnight RRP (daily)
-    ]);
-
-    // Fetch S&P 500 daily prices
+    const walcl = await fetchFredSeries('WALCL', startDate, endDate);
+    await delay(3000);
+    const wtregen = await fetchFredSeries('WTREGEN', startDate, endDate);
+    await delay(3000);
+    const rrpDaily = await fetchFredSeries('RRPONTSYD', startDate, endDate);
+    await delay(3000);
     const sp500Daily = await fetchSP500(startDate, endDate);
 
-    // Build lookup maps for fast access
-    const tregenMap = new Map(wtregen.map(d => [d.date, d.value / 1000])); // WTREGEN is in millions on FRED, convert to billions
+    const tregenMap = new Map(wtregen.map(d => [d.date, d.value / 1000]));
     const rrpMap    = new Map(rrpDaily.map(d => [d.date, d.value]));
     const sp500Map  = new Map(sp500Daily.map(d => [d.date, d.value]));
 
-    // WALCL provides the canonical weekly dates (Wednesdays)
-    // For each date, look up the other series (using nearest-day fallback)
     const dataPoints: DataPoint[] = [];
 
     for (const { date, value: fedAssetsRaw } of walcl) {
-      const fedAssets = fedAssetsRaw / 1000; // WALCL is in millions on FRED, convert to billions
-      const tga   = tregenMap.get(date)         ?? nearestValue(tregenMap, date);
+      const fedAssets = fedAssetsRaw / 1000;
+      const tga   = tregenMap.get(date) ?? nearestValue(tregenMap, date);
       const rrp   = nearestValue(rrpMap, date);
       const sp500 = nearestValue(sp500Map, date);
 
@@ -53,10 +50,8 @@ export async function GET() {
       });
     }
 
-    // Sort chronologically
     dataPoints.sort((a, b) => a.date.localeCompare(b.date));
 
-    // Persist to Redis
     await redis.set(DATA_KEY, JSON.stringify(dataPoints));
     await redis.set(UPDATED_KEY, new Date().toISOString());
 
