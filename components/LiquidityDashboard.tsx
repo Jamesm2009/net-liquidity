@@ -32,7 +32,7 @@ function fmtDateFull(dateStr: string) {
 }
 
 
-// Rolling Pearson correlation between Net Liquidity and S&P 500
+// Rolling Pearson correlation between Net Liquidity and S&P 500 v2
 function rollingCorrelation(data: DataPoint[], window: number): { date: string; correlation: number }[] {
   const results: { date: string; correlation: number }[] = [];
   for (let i = window - 1; i < data.length; i++) {
