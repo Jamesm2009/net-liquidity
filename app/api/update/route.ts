@@ -37,11 +37,14 @@ export async function GET(request: Request) {
       return NextResponse.json({ message: 'Already up to date', lastDate });
     }
 
-    const [walcl, wtregen, rrpDaily] = await Promise.all([
-      fetchFredSeries('WALCL', startDate, endDate),
-      fetchFredSeries('WTREGEN', startDate, endDate),
-      fetchFredSeries('RRPONTSYD', startDate, endDate),
-    ]);
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+    const walcl = await fetchFredSeries('WALCL', startDate, endDate);
+    await delay(500);
+    const wtregen = await fetchFredSeries('WTREGEN', startDate, endDate);
+    await delay(500);
+    const rrpDaily = await fetchFredSeries('RRPONTSYD', startDate, endDate);
+
 
     const sp500Daily = await fetchSP500(startDate, endDate);
 
