@@ -16,7 +16,7 @@ export async function GET() {
 
     console.log(`Seeding from ${startDate} to ${endDate}...`);
 
-    // Fetch all FRED series in parallel
+    // Fetch all FRED series in parallel v2
     const [walcl, wtregen, rrpDaily] = await Promise.all([
       fetchFredSeries('WALCL', startDate, endDate),       // Fed total assets (weekly)
       fetchFredSeries('WTREGEN', startDate, endDate),     // Treasury Gen. Account (weekly)
