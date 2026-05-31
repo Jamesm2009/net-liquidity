@@ -1,11 +1,10 @@
 export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
 import { NextResponse } from 'next/server';
 import { fetchFredSeries, nearestValue } from '@/lib/fred';
 import { fetchSP500 } from '@/lib/market';
 import { redis, DATA_KEY, UPDATED_KEY } from '@/lib/redis';
 import type { DataPoint } from '@/types';
-
-export const maxDuration = 30;
 
 export async function GET(request: Request) {
   // Vercel automatically sends CRON_SECRET in the Authorization header
