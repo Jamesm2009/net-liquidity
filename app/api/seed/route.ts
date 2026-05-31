@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { fetchFredSeries, nearestValue } from '@/lib/fred';
 import { fetchSP500 } from '@/lib/market';
